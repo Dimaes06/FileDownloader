@@ -36,10 +36,10 @@ namespace FileDownloader
             this.programNameLabel = new System.Windows.Forms.Label();
             this.fileNameLabel = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.presentersTextBox = new System.Windows.Forms.TextBox();
+            this.presenterTitleLabel = new System.Windows.Forms.Label();
             this.fileNameTitleLabel = new System.Windows.Forms.Label();
             this.programNameTitleLabel = new System.Windows.Forms.Label();
-            this.presenterTitleLabel = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
             this.fileSizeLabel = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -60,6 +60,7 @@ namespace FileDownloader
             this.URITextBox.Name = "URITextBox";
             this.URITextBox.Size = new System.Drawing.Size(695, 20);
             this.URITextBox.TabIndex = 1;
+            this.URITextBox.TextChanged += new System.EventHandler(this.URITextBox_TextChanged);
             // 
             // URILabel
             // 
@@ -97,7 +98,7 @@ namespace FileDownloader
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.textBox1);
+            this.groupBox1.Controls.Add(this.presentersTextBox);
             this.groupBox1.Controls.Add(this.presenterTitleLabel);
             this.groupBox1.Controls.Add(this.fileNameTitleLabel);
             this.groupBox1.Controls.Add(this.programNameTitleLabel);
@@ -109,6 +110,23 @@ namespace FileDownloader
             this.groupBox1.TabIndex = 8;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "File Name";
+            // 
+            // presentersTextBox
+            // 
+            this.presentersTextBox.Location = new System.Drawing.Point(122, 69);
+            this.presentersTextBox.Name = "presentersTextBox";
+            this.presentersTextBox.Size = new System.Drawing.Size(558, 20);
+            this.presentersTextBox.TabIndex = 13;
+            this.presentersTextBox.TextChanged += new System.EventHandler(this.presentersTextBox_TextChanged);
+            // 
+            // presenterTitleLabel
+            // 
+            this.presenterTitleLabel.AutoSize = true;
+            this.presenterTitleLabel.Location = new System.Drawing.Point(23, 70);
+            this.presenterTitleLabel.Name = "presenterTitleLabel";
+            this.presenterTitleLabel.Size = new System.Drawing.Size(60, 13);
+            this.presenterTitleLabel.TabIndex = 12;
+            this.presenterTitleLabel.Text = "Presenters:";
             // 
             // fileNameTitleLabel
             // 
@@ -127,22 +145,6 @@ namespace FileDownloader
             this.programNameTitleLabel.Size = new System.Drawing.Size(80, 13);
             this.programNameTitleLabel.TabIndex = 8;
             this.programNameTitleLabel.Text = "Program Name:";
-            // 
-            // presenterTitleLabel
-            // 
-            this.presenterTitleLabel.AutoSize = true;
-            this.presenterTitleLabel.Location = new System.Drawing.Point(23, 70);
-            this.presenterTitleLabel.Name = "presenterTitleLabel";
-            this.presenterTitleLabel.Size = new System.Drawing.Size(60, 13);
-            this.presenterTitleLabel.TabIndex = 12;
-            this.presenterTitleLabel.Text = "Presenters:";
-            // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(122, 69);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(558, 20);
-            this.textBox1.TabIndex = 13;
             // 
             // fileSizeLabel
             // 
@@ -185,7 +187,7 @@ namespace FileDownloader
         private System.Windows.Forms.Label fileNameTitleLabel;
         private System.Windows.Forms.Label programNameTitleLabel;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox presentersTextBox;
         private System.Windows.Forms.Label presenterTitleLabel;
         private System.Windows.Forms.Label fileSizeLabel;
     }

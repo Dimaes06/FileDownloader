@@ -12,6 +12,8 @@ namespace FileDownloader
 {
     public partial class Form1 : Form
     {
+
+        URIParser URIParser = new URIParser();
         public Form1()
         {
             InitializeComponent();
@@ -49,6 +51,19 @@ namespace FileDownloader
             await downloader.DownloadAsync();
 
 
+        }
+
+        private void URITextBox_TextChanged(object sender, EventArgs e)
+        {
+            fileNameLabel.Text = URIParser.GetFileName(URITextBox.Text, presentersTextBox.Text);
+        }
+
+        private void presentersTextBox_TextChanged(object sender, EventArgs e)
+        {
+            if (!String.IsNullOrEmpty(URITextBox.Text))
+            {
+                fileNameLabel.Text = URIParser.GetFileName(URITextBox.Text, presentersTextBox.Text);
+            }
         }
     }
 }
