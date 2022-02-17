@@ -8,7 +8,7 @@ namespace FileDownloader
 {
     class URIParser
     {
-        public string GetFileName(String URI, String presenters)
+        public static string GetFileName(String URI, String presenters)
         {
             if (String.IsNullOrEmpty(URI))
             {

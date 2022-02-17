@@ -21,8 +21,10 @@ namespace FileDownloader
 
         private async void downloadButton_Click(object sender, EventArgs e)
         {
-             
-            Downloader downloader = new Downloader(URITextBox.Text, "test.mp3");
+
+            downloadButton.Enabled = false;
+
+            Downloader downloader = new Downloader(URITextBox.Text, downloadingProgressBar, fileSizeLabel);
 
             var fileSize = await downloader.GetFileSizeAsync();
 
@@ -48,14 +50,22 @@ namespace FileDownloader
                 fileSizeLabel.Text = Math.Round((Double)fileSize / (1)).ToString() + " bytes";
             }
 
-            await downloader.DownloadAsync();
+            downloader.DownloadAsync(URITextBox.Text, URIParser.GetFileName(URITextBox.Text, presentersTextBox.Text));
 
+            URITextBox.Text = String.Empty;
+            presentersTextBox.Text = String.Empty;
 
         }
 
         private void URITextBox_TextChanged(object sender, EventArgs e)
         {
             fileNameLabel.Text = URIParser.GetFileName(URITextBox.Text, presentersTextBox.Text);
+            if (String.IsNullOrEmpty(fileNameLabel.Text) || fileNameLabel.Text == "N/A" || fileNameLabel.Text == "Invalid URI")
+            {
+                downloadButton.Enabled = false;
+                return;
+            }
+            downloadButton.Enabled = true;
         }
 
         private void presentersTextBox_TextChanged(object sender, EventArgs e)

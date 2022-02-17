@@ -46,9 +46,10 @@ namespace FileDownloader
             // 
             // downloadButton
             // 
-            this.downloadButton.Location = new System.Drawing.Point(60, 275);
+            this.downloadButton.Enabled = false;
+            this.downloadButton.Location = new System.Drawing.Point(669, 284);
             this.downloadButton.Name = "downloadButton";
-            this.downloadButton.Size = new System.Drawing.Size(75, 23);
+            this.downloadButton.Size = new System.Drawing.Size(86, 23);
             this.downloadButton.TabIndex = 0;
             this.downloadButton.Text = "Download";
             this.downloadButton.UseVisualStyleBackColor = true;
