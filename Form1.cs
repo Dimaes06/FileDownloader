@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace FileDownloader
@@ -13,7 +8,9 @@ namespace FileDownloader
     public partial class Form1 : Form
     {
 
-        URIParser URIParser = new URIParser();
+        IEnumerable<URIItem> URIList = new List<URIItem>();
+
+
         public Form1()
         {
             InitializeComponent();
@@ -24,56 +21,87 @@ namespace FileDownloader
 
             downloadButton.Enabled = false;
 
-            Downloader downloader = new Downloader(URITextBox.Text, downloadingProgressBar, fileSizeLabel);
+            Downloader downloader = new Downloader(downloadingProgressBar, fileSizeLabel, richTextBox2);
 
-            var fileSize = await downloader.GetFileSizeAsync();
+            int count = 0;
+            string totalFilesToDownload = (from uriItem in URIList where (uriItem.BadUri != "1" && uriItem.FileName != "") select uriItem).Count().ToString();
 
-             
-            if (fileSize == null)
+            foreach (var URIItem in URIList)
             {
-                fileSizeLabel.Text = "N/A";
-            }
-            else if (fileSize > 999999999)
-            {
-                fileSizeLabel.Text = Math.Round((Double)fileSize / (1024 * 1024 * 1024), 2).ToString() + " Gbytes";
-            }
-            else if (fileSize > 999999)
-            {
-                fileSizeLabel.Text = Math.Round((Double)fileSize / (1024 * 1024), 2).ToString() + " Mbytes";
-            }
-            else if (fileSize > 999)
-            {
-                fileSizeLabel.Text = Math.Round((Double)fileSize / 1024, 2).ToString() + " Kbytes";
-            }
-            else if (fileSize <= 999)
-            {
-                fileSizeLabel.Text = Math.Round((Double)fileSize / (1)).ToString() + " bytes";
+                if ((URIItem.BadUri == "1") || (URIItem.FileName == ""))
+                {
+                    continue;
+                }
+
+                await downloader.DownloadAsync(URIItem.Uri, URIItem.FileName);
+                count++;
+                numOfDownloadedFilesLabel.Text = $"{count} of {totalFilesToDownload} files downloaded";
             }
 
-            downloader.DownloadAsync(URITextBox.Text, URIParser.GetFileName(URITextBox.Text, presentersTextBox.Text));
+            downloadingProgressBar.Value = 0;
 
-            URITextBox.Text = String.Empty;
-            presentersTextBox.Text = String.Empty;
+            MessageBox.Show("All files downloaded!", "All done!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            //Downloader downloader = new Downloader(URITextBox.Text, downloadingProgressBar, fileSizeLabel);
+
+            //var fileSize = await downloader.GetFileSizeAsync();
+
+
+            //if (fileSize == null)
+            //{
+            //    fileSizeLabel.Text = "N/A";
+            //}
+            //else if (fileSize > 999999999)
+            //{
+            //    fileSizeLabel.Text = Math.Round((Double)fileSize / (1024 * 1024 * 1024), 2).ToString() + " Gbytes";
+            //}
+            //else if (fileSize > 999999)
+            //{
+            //    fileSizeLabel.Text = Math.Round((Double)fileSize / (1024 * 1024), 2).ToString() + " Mbytes";
+            //}
+            //else if (fileSize > 999)
+            //{
+            //    fileSizeLabel.Text = Math.Round((Double)fileSize / 1024, 2).ToString() + " Kbytes";
+            //}
+            //else if (fileSize <= 999)
+            //{
+            //    fileSizeLabel.Text = Math.Round((Double)fileSize / (1)).ToString() + " bytes";
+            //}
+
+            //downloader.DownloadAsync(URITextBox.Text, URIParser.GetFileName(URITextBox.Text, presentersTextBox.Text));
+
+            //URITextBox.Text = String.Empty;
+            //presentersTextBox.Text = String.Empty;
 
         }
 
-        private void URITextBox_TextChanged(object sender, EventArgs e)
+        private async void openExcelFileButton_Click(object sender, EventArgs e)
         {
-            fileNameLabel.Text = URIParser.GetFileName(URITextBox.Text, presentersTextBox.Text);
-            if (String.IsNullOrEmpty(fileNameLabel.Text) || fileNameLabel.Text == "N/A" || fileNameLabel.Text == "Invalid URI")
-            {
-                downloadButton.Enabled = false;
-                return;
-            }
-            downloadButton.Enabled = true;
-        }
+            await ExcelInteraction.LoadListFromExcelAsync(openFileDialog1, excelFileNameLabel);
 
-        private void presentersTextBox_TextChanged(object sender, EventArgs e)
-        {
-            if (!String.IsNullOrEmpty(URITextBox.Text))
+            URIList = await ExcelInteraction.GetURIList();
+
+
+            if (URIList.Count() > 0)
             {
-                fileNameLabel.Text = URIParser.GetFileName(URITextBox.Text, presentersTextBox.Text);
+
+                numberOfLoadedURIlabel.Text = (from uriItem in URIList where (uriItem.BadUri != "1" && uriItem.FileName != "") select uriItem).Count().ToString();
+                numOfBadURILabel.Text = (from uriItem in URIList where (uriItem.BadUri == "1") select uriItem).Count().ToString();
+                numOfMissingProgramsLabel.Text = (from uriItem in URIList where (uriItem.FileName == "" && uriItem.BadUri != "1") select uriItem).Count().ToString();
+
+                int count = 0;
+
+                foreach (var URI in URIList)
+                {
+                    count++;
+                    listOfURIRichTextBox.Text += count.ToString() + ": ";
+                    listOfURIRichTextBox.Text += URI.Uri;
+                    listOfURIRichTextBox.Text += "\n";
+                }
             }
+
+            downloadButton.Enabled = URIList.Count() > 0;
+
         }
     }
 }

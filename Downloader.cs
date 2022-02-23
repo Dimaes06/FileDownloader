@@ -11,26 +11,28 @@ namespace FileDownloader
     {
         readonly HttpClient _client = new HttpClient();
         string _URI;
+        private string _fileName;
         ProgressBar _progressBar;
         Label _fileSizeLabel;
+        private RichTextBox _richTextBox;
 
 
-        public Downloader(string URI, ProgressBar progressBar, Label fileSizeLabel)
+        public Downloader(ProgressBar progressBar, Label fileSizeLabel, RichTextBox richTextBox)
         {
-            if (URI is null)
-            {
-                throw new ArgumentNullException(nameof(URI));
-            }
-
-            _URI = URI;
             _progressBar = progressBar;
             _fileSizeLabel = fileSizeLabel;
+            _richTextBox = richTextBox;
+
         }
 
-        public void DownloadAsync(String URI, String fileName)
+        public async Task DownloadAsync(String URI, String fileName)
         {
 
-            if (CheckForFileExist(fileName))
+            string _fullFileName = @".\MP3\" + fileName;
+
+            _fileName = fileName;
+
+            if (CheckForFileExist(_fileName))
             {
                 MessageBox.Show($"File \"{fileName}\" already exist!");
                 _fileSizeLabel.Text = "0 bytes";
@@ -41,29 +43,32 @@ namespace FileDownloader
             {
                 client.DownloadProgressChanged += Client_DownloadProgressChanged;
                 client.DownloadFileCompleted += Client_DownloadFileCompleted;
-                client.DownloadFileAsync(new Uri(URI), AppContext.BaseDirectory + fileName);
+
+                await client.DownloadFileTaskAsync(new Uri(URI), AppContext.BaseDirectory + _fullFileName);
             }
 
         }
 
         private void Client_DownloadFileCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
-            MessageBox.Show("Download Completed");
-            _progressBar.Value = 0;
-            _fileSizeLabel.Text = "0 bytes";
+            //MessageBox.Show("Download Completed");
+            _richTextBox.Text += "Downloaded: " + _fileName;
+            _richTextBox.Text += "\n";
+            _progressBar.Value = 100;
+            //_fileSizeLabel.Text = "0 bytes";
 
         }
 
         private void Client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            _progressBar.Value = e.ProgressPercentage;            
+            _progressBar.Value = e.ProgressPercentage;
         }
 
         public async Task<long?> GetFileSizeAsync()
         {
 
-               var result = await _client.SendAsync(new HttpRequestMessage(HttpMethod.Head, _URI));
-                return result.Content.Headers.ContentLength;
+            var result = await _client.SendAsync(new HttpRequestMessage(HttpMethod.Head, _URI));
+            return result.Content.Headers.ContentLength;
         }
 
         private Boolean CheckForFileExist(String fileName)
