@@ -24,11 +24,11 @@ namespace FileDownloader
             Downloader downloader = new Downloader(downloadingProgressBar, fileSizeLabel, richTextBox2);
 
             int count = 0;
-            string totalFilesToDownload = (from uriItem in URIList where (uriItem.BadUri != "1" && uriItem.FileName != "") select uriItem).Count().ToString();
+            string totalFilesToDownload = (from uriItem in URIList where (uriItem.BadUri != "1" && uriItem.FileName != "" && uriItem.Downloaded != "1") select uriItem).Count().ToString();
 
             foreach (var URIItem in URIList)
             {
-                if ((URIItem.BadUri == "1") || (URIItem.FileName == ""))
+                if ((URIItem.BadUri == "1") || (URIItem.FileName == "") || (URIItem.Downloaded == "1"))
                 {
                     continue;
                 }
@@ -36,6 +36,7 @@ namespace FileDownloader
                 await downloader.DownloadAsync(URIItem.Uri, URIItem.FileName);
                 count++;
                 numOfDownloadedFilesLabel.Text = $"{count} of {totalFilesToDownload} files downloaded";
+                ExcelInteraction.SetDownloadedFlag(URIItem.Uri);
             }
 
             downloadingProgressBar.Value = 0;
@@ -85,7 +86,7 @@ namespace FileDownloader
             if (URIList.Count() > 0)
             {
 
-                numberOfLoadedURIlabel.Text = (from uriItem in URIList where (uriItem.BadUri != "1" && uriItem.FileName != "") select uriItem).Count().ToString();
+                numberOfLoadedURIlabel.Text = (from uriItem in URIList where (uriItem.BadUri != "1" && uriItem.FileName != "" && uriItem.Downloaded != "1") select uriItem).Count().ToString();
                 numOfBadURILabel.Text = (from uriItem in URIList where (uriItem.BadUri == "1") select uriItem).Count().ToString();
                 numOfMissingProgramsLabel.Text = (from uriItem in URIList where (uriItem.FileName == "" && uriItem.BadUri != "1") select uriItem).Count().ToString();
 

@@ -84,7 +84,7 @@ namespace FileDownloader
 
             return URIList;
         }
-        
+
         public static async Task LoadListFromExcelAsync(OpenFileDialog openFileDialog, Label selectedExcelFileName)
         {
             List<URIItem> URIList = new List<URIItem>();
@@ -195,7 +195,7 @@ namespace FileDownloader
         private static void SetBadURIFlag(List<String> badURIList)
         {
 
-           string connectionString = $"Provider=Microsoft.ACE.OLEDB.12.0; Data Source={_excelFileName}; Extended Properties=\"Excel 12.0 Xml; HDR=YES; IMEX=3;\"";
+            string connectionString = $"Provider=Microsoft.ACE.OLEDB.12.0; Data Source={_excelFileName}; Extended Properties=\"Excel 12.0 Xml; HDR=YES; IMEX=3;\"";
 
             using (OleDbConnection excelConnection = new OleDbConnection(connectionString))
             {
@@ -228,7 +228,7 @@ namespace FileDownloader
             }
         }
 
-        private static void SetDownloadedFlag(String URI)
+        public static void SetDownloadedFlag(String URI)
         {
 
             string connectionString = $"Provider=Microsoft.ACE.OLEDB.12.0; Data Source={_excelFileName}; Extended Properties=\"Excel 12.0 Xml; HDR=YES; IMEX=3;\"";
